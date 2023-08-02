@@ -9,7 +9,7 @@ export default class CompilerService {
             if(entries?.length === 0) entries = undefined;
             const result = await axios.post("http://localhost:8000/", {
             programa: code,
-            inputs: entries
+            inputs: entries?.join(",")
             });
             
             return result.data.output;

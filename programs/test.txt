@@ -1,0 +1,11 @@
+programa{
+funcao inicio(){
+inteiro c = 0
+inteiro max
+leia(max)
+enquanto(c<=max){
+escreva(c)
+c++
+}
+}
+}

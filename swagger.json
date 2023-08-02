@@ -1,0 +1,942 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "API Backend Trilogic",
+        "description": "Documentação da API Backend Trilogic",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "https://trilogic-backend.canoas.ifrs.edu.br/api/",
+            "description": "Servidor Rodando em Produção"
+        }
+    ],
+    "tags": [
+        {
+            "name": "Auth",
+            "description": "Endpoints De Autenticação"
+        },
+        {
+            "name": "Protegidos",
+            "description": "Protegidos por Token"
+        }
+    ],
+    "paths": {
+        "/intro": {
+            "get": {
+                "tags": [
+                    "Protegidos"
+                ],
+                "summary": "Obter Introdução",
+                "description": "Endpoint para obter uma introdução.",
+                "responses": {
+                    "200": {
+                        "description": "Resposta bem-sucedida",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "title": {
+                                            "type": "string",
+                                            "description": "Título da introdução"
+                                        },
+                                        "description": {
+                                            "type": "string",
+                                            "description": "Descrição da introdução"
+                                        },
+                                        "author": {
+                                            "type": "string",
+                                            "description": "Autor da introdução"
+                                        },
+                                        "published_at": {
+                                            "type": "string",
+                                            "format": "date",
+                                            "description": "Data de publicação da introdução"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/registers": {
+            
+            "post": {
+                "tags": [
+                    "Protegidos"
+                ],
+              "summary": "Registrar atividade do usuário",
+              "description": "Endpoint para registrar atividades do usuário.",
+              "requestBody": {
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "user_id": {
+                          "type": "integer",
+                          "description": "ID do usuário"
+                        },
+                        "exercise_id": {
+                          "type": "integer",
+                          "description": "ID da atividade/exercício"
+                        },
+                        "date": {
+                          "type": "string",
+                          "format": "date-time",
+                          "description": "Data da atividade (formato: yyyy-MM-ddTHH:mm:ssZ)"
+                        },
+                        "time": {
+                          "type": "string",
+                          "description": "Tempo gasto na atividade (formato: HH:mm:ss)"
+                        },
+                        "hits": {
+                          "type": "integer",
+                          "description": "Quantidade de acertos na atividade"
+                        },
+                        "misses": {
+                          "type": "integer",
+                          "description": "Quantidade de erros na atividade"
+                        }
+                      },
+                      "required": ["user_id", "exercise_id", "date", "time", "hits", "misses"]
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "201": {
+                  "description": "Atividade registrada com sucesso"
+                },
+                "400": {
+                  "description": "Requisição inválida"
+                },
+                "500": {
+                  "description": "Erro no servidor"
+                }
+              }
+            }
+          },
+            "/reports/users/registers": {
+              "post": {
+                "tags": [
+                    "Protegidos"
+                ],
+                "summary": "Obter relatório de registros de usuários",
+                "description": "Endpoint para obter um relatório contendo as informações dos usuários com base nos parâmetros fornecidos.",
+                "requestBody": {
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "usersIds": {
+                            "type": "array",
+                            "items": {
+                              "type": "integer"
+                            },
+                            "description": "IDs dos usuários (obrigatório)"
+                          },
+                          "fromDate": {
+                            "type": "string",
+                            "format": "date",
+                            "description": "Data de início do período (obrigatório, formato: yyyy-MM-dd)"
+                          },
+                          "toDate": {
+                            "type": "string",
+                            "format": "date",
+                            "description": "Data de término do período (obrigatório, formato: yyyy-MM-dd)"
+                          },
+                          "isAllUsers": {
+                            "type": "boolean",
+                            "description": "Indica se deve retornar informações de todos os usuários (obrigatório, true ou false)"
+                          }
+                        },
+                        "required": ["usersIds", "fromDate", "toDate", "isAllUsers"]
+                      }
+                    }
+                  }
+                },
+                "responses": {
+                  "200": {
+                    "description": "Resposta bem-sucedida",
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "type": "object",
+                          "properties": {
+                            "table": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "userId": {
+                                    "type": "integer",
+                                    "description": "ID do usuário"
+                                  },
+                                  "userName": {
+                                    "type": "string",
+                                    "description": "Nome do usuário"
+                                  },
+                                  "registerDate": {
+                                    "type": "string",
+                                    "format": "date-time",
+                                    "description": "Data do registro"
+                                  },
+                                  "registerTime": {
+                                    "type": "string",
+                                    "description": "Tempo gasto no registro"
+                                  },
+                                  "hits": {
+                                    "type": "integer",
+                                    "description": "Quantidade de acertos no registro"
+                                  },
+                                  "misses": {
+                                    "type": "integer",
+                                    "description": "Quantidade de erros no registro"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "400": {
+                    "description": "Requisição inválida"
+                  },
+                  "500": {
+                    "description": "Erro no servidor"
+                  }
+                }
+              }
+            },
+            "/logicmanager/exercise/{id}": {
+                "put": {
+                    "tags": [
+                        "Protegidos"
+                    ],
+                  "summary": "Modificar exercício por ID",
+                  "description": "Endpoint para modificar um exercício com base no seu ID.",
+                  "parameters": [
+                    {
+                      "name": "id",
+                      "in": "path",
+                      "description": "ID do exercício a ser modificado",
+                      "required": true,
+                      "schema": {
+                        "type": "integer"
+                      }
+                    }
+                  ],
+                  "requestBody": {
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "type": "object",
+                          "properties": {
+                            "name": {
+                              "type": "string",
+                              "description": "Nome do exercício"
+                            },
+                            "description": {
+                              "type": "string",
+                              "description": "Descrição do exercício"
+                            },
+                            "instructions": {
+                              "type": "string",
+                              "description": "Instruções para o exercício"
+                            },
+                            "difficulty": {
+                              "type": "string",
+                              "description": "Dificuldade do exercício"
+                            },
+                            "category": {
+                              "type": "string",
+                              "description": "Categoria do exercício"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "required": false
+                  },
+                  "responses": {
+                    "200": {
+                      "description": "Exercício modificado com sucesso",
+                      "content": {
+                        "application/json": {
+                          "schema": {
+                            "type": "object",
+                            "properties": {
+                              "message": {
+                                "type": "string",
+                                "description": "Mensagem de sucesso"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "400": {
+                      "description": "Requisição inválida"
+                    },
+                    "404": {
+                      "description": "Exercício não encontrado"
+                    },
+                    "500": {
+                      "description": "Erro no servidor"
+                    }
+                  }
+                }
+              },
+              "/user": {
+                "put": {
+                    "tags": [
+                        "Protegidos"
+                    ],
+                  "summary": "Modificar informações do usuário por ID",
+                  "description": "Endpoint para modificar as informações de um usuário com base no ID fornecido.",
+                  "parameters": [
+                    {
+                      "name": "id",
+                      "in": "query",
+                      "required": true,
+                      "description": "ID do usuário",
+                      "schema": {
+                        "type": "integer"
+                      }
+                    }
+                  ],
+                  "requestBody": {
+                    "content": {
+                      "application/json": {
+                        "schema": {
+                          "type": "object",
+                          "properties": {
+                            "name": {
+                              "type": "string",
+                              "description": "Nome do usuário"
+                            },
+                            "school_register_id": {
+                              "type": "string",
+                              "description": "ID de registro da escola do usuário"
+                            },
+                            "gender": {
+                              "type": "string",
+                              "description": "Gênero do usuário"
+                            },
+                            "email": {
+                              "type": "string",
+                              "description": "Endereço de e-mail do usuário"
+                            },
+                            "image": {
+                              "type": "string",
+                              "format": "url",
+                              "description": "URL da imagem do usuário"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "required": true
+                  },
+                  "responses": {
+                    "401": {
+                      "description": "Sem permissão"
+                    },
+                    "200": {
+                      "description": "Resposta bem-sucedida",
+                      "content": {
+                        "application/json": {
+                          "schema": {
+                            "type": "object",
+                            "properties": {
+                              "user": {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "integer",
+                                    "description": "ID do usuário"
+                                  },
+                                  "name": {
+                                    "type": "string",
+                                    "description": "Nome do usuário"
+                                  },
+                                  "school_register_id": {
+                                    "type": "string",
+                                    "description": "ID de registro da escola do usuário"
+                                  },
+                                  "gender": {
+                                    "type": "string",
+                                    "description": "Gênero do usuário"
+                                  },
+                                  "email": {
+                                    "type": "string",
+                                    "description": "Endereço de e-mail do usuário"
+                                  },
+                                  "email_verified_at": {
+                                    "type": "string",
+                                    "format": "date-time",
+                                    "description": "Data e hora de verificação do e-mail"
+                                  },
+                                  "image": {
+                                    "type": "string",
+                                    "format": "url",
+                                    "description": "URL da imagem do usuário"
+                                  },
+                                  "admin_level": {
+                                    "type": "integer",
+                                    "description": "Nível de privilégio de administrador do usuário"
+                                  },
+                                  "google_login": {
+                                    "type": "integer",
+                                    "description": "Indica se o usuário fez login com a conta do Google (1 para sim, 0 para não)"
+                                  },
+                                  "last_login": {
+                                    "type": "string",
+                                    "format": "date-time",
+                                    "description": "Data e hora do último login do usuário"
+                                  },
+                                  "is_active": {
+                                    "type": "integer",
+                                    "description": "Indica se o usuário está ativo (1 para sim, 0 para não)"
+                                  },
+                                  "created_at": {
+                                    "type": "string",
+                                    "format": "date-time",
+                                    "description": "Data e hora de criação do usuário"
+                                  },
+                                  "updated_at": {
+                                    "type": "string",
+                                    "format": "date-time",
+                                    "description": "Data e hora de atualização do usuário"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "400": {
+                      "description": "Requisição inválida"
+                    },
+                    "404": {
+                      "description": "Usuário não encontrado"
+                    },
+                    "500": {
+                      "description": "Erro no servidor"
+                    }
+                  }
+                }
+              },
+        "/course/{courseSlug}": {
+            "get": {
+                "tags": [
+                    "Protegidos"
+                ],
+                "summary": "Retorna as respostas do curso",
+                "description": "Endpoint para obter um JSON com as respostas.",
+                "parameters": [
+                    {
+                        "name": "courseSlug",
+                        "in": "path",
+                        "required": true,
+                        "description": "Slug do curso a ser consultado",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Resposta bem-sucedida",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "modal": {
+                                            "type": "string",
+                                            "description": "Modalidade do curso"
+                                        },
+                                        "courseAmount": {
+                                            "type": "integer",
+                                            "description": "Quantidade total de cursos"
+                                        },
+                                        "exAmount": {
+                                            "type": "integer",
+                                            "description": "Quantidade total de exercícios"
+                                        },
+                                        "exercises": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "codes": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "object",
+                                                            "properties": {
+                                                                "id": {
+                                                                    "type": "integer",
+                                                                    "description": "ID do código"
+                                                                },
+                                                                "name": {
+                                                                    "type": "string",
+                                                                    "description": "Nome do código"
+                                                                },
+                                                                "code": {
+                                                                    "type": "array",
+                                                                    "items": {
+                                                                        "type": "array",
+                                                                        "items": {
+                                                                            "type": "string"
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    "dropAreas": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "object",
+                                                            "properties": {
+                                                                "id": {
+                                                                    "type": "integer",
+                                                                    "description": "ID da área de drop"
+                                                                },
+                                                                "name": {
+                                                                    "type": "string",
+                                                                    "description": "Nome da área de drop"
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    "steps": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "object",
+                                                            "properties": {
+                                                                "id": {
+                                                                    "type": "integer",
+                                                                    "description": "ID do passo"
+                                                                },
+                                                                "text": {
+                                                                    "type": "array",
+                                                                    "items": {
+                                                                        "type": "string"
+                                                                    }
+                                                                },
+                                                                "dropAreas": {
+                                                                    "type": "array",
+                                                                    "items": {
+                                                                        "type": "string"
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "description": "ID do exercício"
+                                                    },
+                                                    "isDoneByUser": {
+                                                        "type": "boolean",
+                                                        "description": "Indica se o exercício foi concluído pelo usuário (true) ou não (false)"
+                                                    },
+                                                    "dialog": {
+                                                        "type": "string",
+                                                        "description": "Mensagem de diálogo relacionada ao exercício"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/logicmanager/course/{courseSlug}": {
+            "get": {
+                "tags": [
+                    "Protegidos"
+                ],
+                "summary": "Obter detalhes do curso",
+                "description": "Endpoint para obter os detalhes de um curso específico.",
+                "parameters": [
+                    {
+                        "name": "courseSlug",
+                        "in": "path",
+                        "required": true,
+                        "description": "Slug do curso a ser consultado",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Resposta bem-sucedida",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "modal": {
+                                            "type": "string",
+                                            "description": "Modalidade do curso"
+                                        },
+                                        "dialogs": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "exerciseId": {
+                                                        "type": "integer",
+                                                        "description": "ID do exercício"
+                                                    },
+                                                    "exerciseName": {
+                                                        "type": "string",
+                                                        "description": "Nome do exercício"
+                                                    },
+                                                    "exerciseDialog": {
+                                                        "type": "string",
+                                                        "description": "Mensagem de diálogo relacionada ao exercício"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/courses/status": {
+            "get": {
+                "tags": [
+                    "Protegidos"
+                ],
+                "summary": "Obter status dos cursos",
+                "description": "Endpoint para obter o status dos cursos.",
+                "responses": {
+                    "200": {
+                        "description": "Resposta bem-sucedida",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer",
+                                                "description": "ID do curso"
+                                            },
+                                            "name": {
+                                                "type": "string",
+                                                "description": "Nome do curso"
+                                            },
+                                            "slug": {
+                                                "type": "string",
+                                                "description": "Slug do curso"
+                                            },
+                                            "isCompleted": {
+                                                "type": "boolean",
+                                                "description": "Indica se o curso está concluído (true) ou não (false)"
+                                            }
+                                        }
+                                    }
+                                },
+                                "example": [
+                                    {
+                                        "id": 1,
+                                        "name": "Descrição Narrativa",
+                                        "slug": "DescNarrativa",
+                                        "isCompleted": false
+                                    },
+                                    {
+                                        "id": 2,
+                                        "name": "Fluxograma",
+                                        "slug": "Fluxograma",
+                                        "isCompleted": false
+                                    },
+                                    {
+                                        "id": 3,
+                                        "name": "Variáveis",
+                                        "slug": "Variaveis",
+                                        "isCompleted": false
+                                    },
+                                    {
+                                        "id": 4,
+                                        "name": "Operações",
+                                        "slug": "Operacoes",
+                                        "isCompleted": false
+                                    },
+                                    {
+                                        "id": 5,
+                                        "name": "Leitura e Escrita",
+                                        "slug": "LeituraEscrita",
+                                        "isCompleted": false
+                                    },
+                                    {
+                                        "id": 6,
+                                        "name": "Estruturas Condicionais",
+                                        "slug": "Decisao",
+                                        "isCompleted": false
+                                    },
+                                    {
+                                        "id": 7,
+                                        "name": "Estruturas de Repetição",
+                                        "slug": "Repeticao",
+                                        "isCompleted": false
+                                    },
+                                    {
+                                        "id": 8,
+                                        "name": "Vetores",
+                                        "slug": "Vetores",
+                                        "isCompleted": false
+                                    },
+                                    {
+                                        "id": 9,
+                                        "name": "Matrizes",
+                                        "slug": "Matrizes",
+                                        "isCompleted": false
+                                    },
+                                    {
+                                        "id": 10,
+                                        "name": "Pseudocódigos",
+                                        "slug": "Pseudocodigos",
+                                        "isCompleted": false
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/users": {
+            "get": {
+                "tags": [
+                    "Protegidos"
+                ],
+                "summary": "Get all users",
+                "description": "Endpoint to retrieve a list of all users.",
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer",
+                                                "description": "User ID"
+                                            },
+                                            "name": {
+                                                "type": "string",
+                                                "description": "User's full name"
+                                            },
+                                            "email": {
+                                                "type": "string",
+                                                "format": "email",
+                                                "description": "User's email address"
+                                            },
+                                            "gender": {
+                                                "type": "string",
+                                                "description": "User's gender"
+                                            },
+                                            "created_at": {
+                                                "type": "string",
+                                                "format": "date-time",
+                                                "description": "User's creation date and time"
+                                            },
+                                            "updated_at": {
+                                                "type": "string",
+                                                "format": "date-time",
+                                                "description": "User's last update date and time"
+                                            }
+                                        },
+                                        "example": {
+                                            "id": 1,
+                                            "name": "John Doe",
+                                            "email": "john.doe@example.com",
+                                            "gender": "Male",
+                                            "created_at": "2023-07-31T12:34:56.000Z",
+                                            "updated_at": "2023-07-31T12:34:56.000Z"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "End point para login",
+                "description": "Faça login usando Matricula,Email ou Nome",
+                "requestBody": {
+                    "required": false,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "description": "Nome a ser validado"
+                                    },
+                                    "school_register_id": {
+                                        "type": "string",
+                                        "description": "ID de registro escolar a ser validado"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "description": "Endereço de e-mail a ser validado"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Dados válidos",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "user": {
+                                            "type": "object",
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "description": "ID do usuário"
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "description": "Nome do usuário"
+                                                },
+                                                "school_register_id": {
+                                                    "type": "string",
+                                                    "description": "ID de registro escolar do usuário"
+                                                },
+                                                "gender": {
+                                                    "type": "string",
+                                                    "description": "Gênero do usuário"
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "description": "Endereço de e-mail do usuário"
+                                                },
+                                                "email_verified_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "description": "Data e hora de verificação do e-mail do usuário"
+                                                },
+                                                "image": {
+                                                    "type": "string",
+                                                    "description": "URL da imagem do usuário"
+                                                },
+                                                "admin_level": {
+                                                    "type": "integer",
+                                                    "description": "Nível de administração do usuário"
+                                                },
+                                                "google_login": {
+                                                    "type": "integer",
+                                                    "description": "Indica se o usuário está logado com uma conta do Google (1 para sim, 0 para não)"
+                                                },
+                                                "last_login": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "description": "Data e hora do último login do usuário"
+                                                },
+                                                "is_active": {
+                                                    "type": "integer",
+                                                    "description": "Indica se o usuário está ativo (1 para sim, 0 para não)"
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "description": "Data e hora de criação do usuário"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time",
+                                                    "description": "Data e hora de atualização do usuário"
+                                                }
+                                            }
+                                        },
+                                        "token": {
+                                            "type": "string",
+                                            "description": "Token de acesso fornecido para o usuário"
+                                        }
+                                    }
+                                },
+                                "example": {
+                                    "user": {
+                                        "id": 299,
+                                        "name": "Nome Sobrenome",
+                                        "school_register_id": "Matricula",
+                                        "gender": null,
+                                        "email": "Matricula@aluno.canoas.ifrs.edu.br",
+                                        "email_verified_at": "2023-07-28T22:20:19.000000Z",
+                                        "image": "LINK",
+                                        "admin_level": 0,
+                                        "google_login": 1,
+                                        "last_login": "2023-07-28T22:20:19.000000Z",
+                                        "is_active": 1,
+                                        "created_at": "2023-04-18T16:27:12.000000Z",
+                                        "updated_at": "2023-07-28T22:20:19.000000Z"
+                                    },
+                                    "token": "Number|Token"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Dados inválidos"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "scheme": "bearer",
+                "bearerFormat": "SANCTUN"
+            }
+        }
+    },
+    "security": [
+        {
+            "bearerAuth": [
+                "Protegidos"
+            ]
+        }
+    ]
+}

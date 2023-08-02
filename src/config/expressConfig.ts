@@ -1,6 +1,8 @@
 import 'express-async-errors';
 
-import express,{ Express } from "express";
+import express, { Express } from "express";
+import swaggerUi from "swagger-ui-express";
+import * as swaggerDocument from "../../swagger.json";
 
 import addExerciceRoute from "../routes/addExerciceRoute";
 import submitExerciceRoute from "../routes/submitExerciceRoute";
@@ -16,10 +18,13 @@ export default function expressConfig(): Express {
     app.use(express.urlencoded({ extended: true }));
     app.use(verifyPerm)
     //Configure routes
-    app.use("/exercice",addExerciceRoute)
-    app.use("/exercice",submitExerciceRoute)
+    app.use("/exercice", addExerciceRoute)
+    app.use("/exercice", submitExerciceRoute)
     //Configure error handler
+
+    app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
     app.use(errorHandler);
 
-return app
+    return app
 }

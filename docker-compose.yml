@@ -1,0 +1,20 @@
+version: "3"
+services:
+  backend:
+    build: .
+    container_name: backend
+    ports:
+      - "3000:3000"
+    # environment:
+    #   - name=value
+  compiler:
+    image: compiler
+    container_name: compiler
+    ports:
+      - "8000:8000"
+    networks:
+      - portugol
+networks:
+  portugol:
+    driver: bridge
+  
