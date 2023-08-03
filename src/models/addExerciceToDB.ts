@@ -37,7 +37,6 @@ try {
             tests:true
         }
     })
-    console.log(result)
 
     if(!result){
         throw new AppErrorConstructor("Internal Server Error",500)

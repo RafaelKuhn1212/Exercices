@@ -5,16 +5,9 @@ services:
     container_name: backend
     ports:
       - "3000:3000"
-    # environment:
-    #   - name=value
   compiler:
-    image: compiler
+    image: rafaelkuhn/compiler
     container_name: compiler
     ports:
       - "8000:8000"
-    networks:
-      - portugol
-networks:
-  portugol:
-    driver: bridge
   

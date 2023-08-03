@@ -11,86 +11,89 @@ type body = InferType<typeof addExercicesSchema>;
 
 //import
 export async function addExercice(req: Request<{}, {}, body>, res: Response) {
-
-    if(await checkIfExerciceExists(req.body.statement)){
+    console.log(req.body)
+    if (await checkIfExerciceExists(req.body.statement)) {
         throw new AppErrorConstructor('Exercice already exists', 400)
     }
 
-    if (req.body.entries?.length === 0 || req.body.entries === undefined) {
-        const compiler = new compilerService();
-        const programResult = await compiler.runCode(req.body.code, req.body.entries)
-        // Todos dados ja foram validados pelo schema e pelo validador lexico e sintatico do compilador
+    const { randomTestCases, genRandomData, ioData } = req.body;
 
-        const testCase: testCasesDTO = {
-            testCases: [
-                { output: programResult }
-            ]
-        }
+    //GENERATE IO tests
 
-        const result = await addExerciceToDB({
-            statement: req.body.statement,
-            code: req.body.code,
-            difficulty: req.body.difficulty,
-        }, testCase)
+    if (genRandomData) {
 
-        res.send(result)
+        if (randomTestCases.entries?.length == 0) {
+            const compiler = new compilerService();
+            const programResult = await compiler.runCode(randomTestCases.code, randomTestCases.entries)
+            // Todos dados ja foram validados pelo schema e pelo validador lexico e sintatico do compilador
 
-    } else {
-        const compiler = new compilerService();
-        //RANDOM TEST CASES
-        const dataGen = new randomDataGenerator();
-        const testCases: testCasesDTO = {
-            testCases: []
-        }
+            const testCase: testCasesDTO = {
+                testCases: [
+                    { output: programResult }
+                ]
+            }
 
-        await Promise.all(
-        Array.from({ length:10 }, () => {
-
-            return new Promise(async (resolve, reject) => {
-                try {
-                    const randomData = dataGen.lazyGen(req.body.entries as Array<string>)
-                    const programResult = compiler.runCode(req.body.code, randomData)
-                    testCases.testCases.push({
-                        inputs: randomData,
-                        output: await programResult
+            if (ioData) {
+    
+                ioData.forEach(test => {
+                    testCase.testCases.push({
+                        inputs: test.inputs,
+                        output: test.output
                     })
-                    return resolve(true) 
-                } catch (error) {
-                 return reject(error)   
-                }
-                
-            })
-
-        })
-        )
-
-        //EDGE TEST CASES
-        if (req.body.edges !== undefined) {
-
-            for (let i = 0; i < req.body.edges.length; i++) {
-
-                testCases.testCases.push({
-                    inputs: req.body.edges[i],
-                    output: await compiler.runCode(req.body.code, req.body.edges[i])
                 })
 
             }
 
-        }
-        if (req.body.edges !== undefined) {
-            const edges: Array<Array<number | string>> = req.body.edges as Array<Array<number | string>>
-
             const result = await addExerciceToDB({
                 statement: req.body.statement,
-                code: req.body.code,
+                code: randomTestCases.code,
                 difficulty: req.body.difficulty,
-                edgeCases: edges
-            }, testCases)
+            }, testCase)
+
             res.send(result)
         } else {
+
+            const compiler = new compilerService();
+            //RANDOM TEST CASES
+            const dataGen = new randomDataGenerator();
+            const testCases: testCasesDTO = {
+                testCases: []
+            }
+
+            if (ioData) {
+    
+                ioData.forEach(test => {
+                    testCases.testCases.push({
+                        inputs: test.inputs,
+                        output: test.output
+                    })
+                })
+
+            }
+
+            await Promise.all(
+                Array.from({ length: 10 }, () => {
+
+                    return new Promise(async (resolve, reject) => {
+                        try {
+                            const randomData = dataGen.lazyGen(randomTestCases.entries as Array<string>)
+                            const programResult = compiler.runCode(randomTestCases.code, randomData)
+                            testCases.testCases.push({
+                                inputs: randomData,
+                                output: await programResult
+                            })
+                            return resolve(true)
+                        } catch (error) {
+                            return reject(error)
+                        }
+
+                    })
+
+                })
+            )
             const result = await addExerciceToDB({
                 statement: req.body.statement,
-                code: req.body.code,
+                code: randomTestCases.code,
                 difficulty: req.body.difficulty,
             }, testCases)
             res.send(result)
