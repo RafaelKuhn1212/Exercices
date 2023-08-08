@@ -1,25 +1,32 @@
-import yup,{object,array,string,number, bool} from 'yup';
+import yup,{object,array,string,number, boolean} from 'yup';
 
 const addExercicesSchema = object({
-    genRandomData: bool().required(),
+    
+    genRandomData: boolean().required(),
     statement: string().required(),
     difficulty: number().required().min(0).max(5),
-    randomTestCases: object({
-        code: string().required().matches(/(programa|inicio)/),
-        entries: array().of(string().matches(/inteiro|real|cadeia|caracter|logico/).required())
-    }).test("Random test cases need to have a value if genRandomData is true","Random test cases need to have a value if genRandomData is true", function(value) {
-        const {genRandomData} = this.parent
-        return genRandomData ? value !== undefined : true
-        }),
+        
+    code: string().matches(/(programa|inicio)/).when("genRandomData", {
+        is: true,
+        then: (schema) => schema.required()
+    }),
+    entries: array().of(string().matches(/inteiro|real|cadeia|caracter|logico/).required()).when("genRandomData", {
+        is: true,
+        then: (schema) => schema.required()
+    }),
+    
+            
     ioData: array().of(object({
         inputs: array().of(string().required()).required(),
         output: string().required()
-    }).required()).test("IO data need to have a value if genRandomData is false","IO data need to have a value if genRandomData is false", function(value) {
-        const {genRandomData} = this.parent
-        return genRandomData ? true : value !== undefined
+    }).required()).when("genRandomData", {
+        is: false,
+        then(schema) {
+            return schema.required()
         }
-    )
+    })
         
 })
+
 
 export default addExercicesSchema;

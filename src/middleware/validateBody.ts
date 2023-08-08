@@ -15,6 +15,7 @@ import AppErrorConstructor from '../Errors/errorConstructor';
         req.body = await schema.validate(req.body, schemaOptions);
         next();
       } catch (error:any) {
+
         throw next(new AppErrorConstructor(error.errors,400))
 
       }

@@ -11,73 +11,33 @@ type body = InferType<typeof addExercicesSchema>;
 
 //import
 export async function addExercice(req: Request<{}, {}, body>, res: Response) {
-    console.log(req.body)
     if (await checkIfExerciceExists(req.body.statement)) {
         throw new AppErrorConstructor('Exercice already exists', 400)
     }
 
-    const { randomTestCases, genRandomData, ioData } = req.body;
-
-    //GENERATE IO tests
-
+    const { genRandomData, ioData, entries, code } = req.body;
+    let testCases: testCasesDTO = {
+        testCases: []
+    }
+    //GENERATE RANDOM tests
     if (genRandomData) {
 
-        if (randomTestCases.entries?.length == 0) {
+        if (entries?.length == 0) {
             const compiler = new compilerService();
-            const programResult = await compiler.runCode(randomTestCases.code, randomTestCases.entries)
+            const programResult = await compiler.runCode(code as string, entries)
             // Todos dados ja foram validados pelo schema e pelo validador lexico e sintatico do compilador
+            testCases.testCases.push({ output: programResult })
 
-            const testCase: testCasesDTO = {
-                testCases: [
-                    { output: programResult }
-                ]
-            }
-
-            if (ioData) {
-    
-                ioData.forEach(test => {
-                    testCase.testCases.push({
-                        inputs: test.inputs,
-                        output: test.output
-                    })
-                })
-
-            }
-
-            const result = await addExerciceToDB({
-                statement: req.body.statement,
-                code: randomTestCases.code,
-                difficulty: req.body.difficulty,
-            }, testCase)
-
-            res.send(result)
         } else {
-
             const compiler = new compilerService();
-            //RANDOM TEST CASES
             const dataGen = new randomDataGenerator();
-            const testCases: testCasesDTO = {
-                testCases: []
-            }
-
-            if (ioData) {
-    
-                ioData.forEach(test => {
-                    testCases.testCases.push({
-                        inputs: test.inputs,
-                        output: test.output
-                    })
-                })
-
-            }
-
             await Promise.all(
                 Array.from({ length: 10 }, () => {
 
                     return new Promise(async (resolve, reject) => {
                         try {
-                            const randomData = dataGen.lazyGen(randomTestCases.entries as Array<string>)
-                            const programResult = compiler.runCode(randomTestCases.code, randomData)
+                            const randomData = dataGen.lazyGen(entries as Array<string>)
+                            const programResult = compiler.runCode(code as string, randomData)
                             testCases.testCases.push({
                                 inputs: randomData,
                                 output: await programResult
@@ -91,15 +51,26 @@ export async function addExercice(req: Request<{}, {}, body>, res: Response) {
 
                 })
             )
-            const result = await addExerciceToDB({
-                statement: req.body.statement,
-                code: randomTestCases.code,
-                difficulty: req.body.difficulty,
-            }, testCases)
-            res.send(result)
+
         }
 
     }
 
+    //USE PROVIDED TESTS
+    if (ioData) {
+        testCases.testCases.push(...ioData)
+    }
+
+    try {
+
+        const result = await addExerciceToDB({
+            difficulty: req.body.difficulty,
+            statement: req.body.statement,
+        }, testCases)
+        
+        res.status(201).json(result)
+    } catch (error) {
+        throw new AppErrorConstructor("Internal server error", 500)
+    }
 
 }

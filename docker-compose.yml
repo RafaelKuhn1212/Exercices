@@ -2,12 +2,18 @@ version: "3"
 services:
   backend:
     build: .
-    container_name: backend
+    container_name: rafaelkuhn/backend
+    env_file:
+      - .env
     ports:
       - "3000:3000"
+    networks:
+      - default
   compiler:
     image: rafaelkuhn/compiler
     container_name: compiler
-    ports:
-      - "8000:8000"
-  
+    networks:
+      - default
+networks:
+  default:
+    driver: bridge

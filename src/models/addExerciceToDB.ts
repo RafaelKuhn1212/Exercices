@@ -16,10 +16,7 @@ try {
     const result = await prisma.exercice.create({
         data:{
             statement:exercice.statement,
-            code:exercice.code,
             difficulty:exercice.difficulty,
-            entries:exercice.entries,
-            edgeCases:exercice.edgeCases,
             tests:{
                 
                 create:testCases.testCases.map(testCase => {
