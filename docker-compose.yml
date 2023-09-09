@@ -2,7 +2,8 @@ version: "3"
 services:
   backend:
     build: .
-    container_name: rafaelkuhn/backend
+    image: rafaelkuhn/backend
+    container_name: backend
     env_file:
       - .env
     ports:
