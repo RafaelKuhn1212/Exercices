@@ -22,17 +22,36 @@ model exercice {
 model user {
   id        String   @id @default(uuid())
   name      String @unique
+  password  String
 
   exercisesDone exercice[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  role      Role     @relation(fields: [roleId], references: [id])
+  roleId    String
 }
 
+model Role{
+  id String @id @default(uuid())
+  name String @unique
+  routesAllow Routes[]
+  users user[]
+}
+
+enum Routes{
+  exerciceadd
+  exercicedelete
+  exercice
+  exercicelist
+  exercicesubmit
+  exerciceupdate
+}
 
 model tests {
   id         String   @id @default(uuid())
-  exerciseId String
+  exerciseId String?
   input      String[]
   output     String
   createdAt  DateTime @default(now())

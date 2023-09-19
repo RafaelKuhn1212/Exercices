@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client'
 import AppErrorConstructor from '../Errors/errorConstructor'
+import getUserDifficult from './getDifficultyFromUser'
 const prisma = new PrismaClient()
 
 export default async function getExercice(name: string) {
@@ -12,6 +13,7 @@ export default async function getExercice(name: string) {
             exercisesDone: true
         }
     })
+
     if(!user){
         const randomExercice = await prisma.exercice.findFirst({
             orderBy: {
@@ -20,12 +22,16 @@ export default async function getExercice(name: string) {
         })
         return randomExercice
     }else{
+
+        const difficulty = await getUserDifficult(name)
+        
         const exerciceDone = user.exercisesDone.map(exercice => exercice.id)
         const randomExercice = await prisma.exercice.findFirst({
             where: {
                 id: {
                     notIn: exerciceDone
-                }
+                },
+                difficulty: difficulty
             },
             orderBy: {
                 id: 'desc'

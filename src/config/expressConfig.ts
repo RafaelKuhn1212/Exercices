@@ -6,13 +6,15 @@ import * as swaggerDocument from "../../swagger.json";
 
 import cors from "cors";
 
-import addExerciceRoute from "../routes/addExerciceRoute";
-import submitExerciceRoute from "../routes/submitExerciceRoute";
-import getExerciceRoute from "../routes/getExerciceRoute";
+import exerciceRoutes from "../routes/exercice/index";
+import loginRoute from '../routes/auth/loginRoute';
 
 import verifyPerm from "../middleware/verifyPerm"
-
 import errorHandler from "../Errors/errorHandler";
+import validateJWT from '../middleware/validateJWT';
+import signUpRoute from '../routes/auth/signUpRoute';
+
+
 
 export default function expressConfig(): Express {
     const app = express();
@@ -22,14 +24,30 @@ export default function expressConfig(): Express {
             origin: '*'
         }
     ));
+
+
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
-    app.use(verifyPerm)
+
+    
     //Configure routes
-    app.use("/exercice", addExerciceRoute)
-    app.use("/exercice", submitExerciceRoute)
-    app.use("/exercice", getExerciceRoute)
-    //Configure error handler
+
+    app.get("/", (req, res) => {
+        res.sendFile("R:\\AutomaticProjects\\Exercices\\frontend\\index.html")
+    })
+    
+    app.use("/auth", signUpRoute)
+    app.use("/auth", loginRoute)    
+
+    app.use(validateJWT)
+    app.use(verifyPerm)
+
+    app.use("/exercice", exerciceRoutes.updateExerciceRoute)
+    app.use("/exercice", exerciceRoutes.addExerciceRoute)
+    app.use("/exercice", exerciceRoutes.submitExerciceRoute)
+    app.use("/exercice", exerciceRoutes.getExerciceRoute)
+    app.use("/exercice", exerciceRoutes.deleteExerciceRoute)
+    app.use("/exercice", exerciceRoutes.listExerciceRoute)
 
     app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 

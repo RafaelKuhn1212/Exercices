@@ -5,7 +5,6 @@ const prisma = new PrismaClient()
 
 export const userPass = async (name: string, exerciceId: string) => {
 
-    if(await checkIfUserExists(name)){
         await prisma.user.update({
             where: {
                 name: name
@@ -20,18 +19,5 @@ export const userPass = async (name: string, exerciceId: string) => {
 
     })
     
-    
-}else{
-    await prisma.user.create({
-        data: {
-            name: name,
-            exercisesDone:{
-                connect: {
-                    id: exerciceId
-                }
-            }
-        }
-    })
-}
     
 }

@@ -1,4 +1,4 @@
-import yup,{object,array,string,number} from 'yup';
+import yup,{object,string} from 'yup';
 
 const submitExercicesSchema = object({
 

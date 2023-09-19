@@ -1,15 +1,18 @@
 import { Request, Response } from "express";
 import getExercice from "../../models/getExercice";
+import { PrismaClient } from "@prisma/client";
+import AppErrorConstructor from "../../Errors/errorConstructor";
 
+const prisma = new PrismaClient()
 export default async function getExerciceController(req:Request,res:Response){
-    if(req.headers["name"] == null || req.headers["name"] == undefined) {
-
-        return res.status(500).send({message: 'Voce nao esta logado'})
-
-    }
-
-    res.send(await getExercice(req.headers["name"] as string))
     
+    const user = await prisma.user.findUnique({
+        where:{
+            id: req.body.userId
+        }
+    })
+    if(user == undefined) throw new AppErrorConstructor("User not found",404)
+    res.send(await getExercice(user.name))
 
 }
 
