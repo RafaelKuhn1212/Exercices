@@ -1,5 +1,5 @@
-import { Prisma, PrismaClient } from '@prisma/client'
-const prisma = new PrismaClient()
+import prisma from "../libs/prisma/prisma";
+
 
 export const checkIfUserExists = async (name:string) => {
     const user = await prisma.user.findUnique({

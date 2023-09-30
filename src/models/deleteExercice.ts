@@ -1,6 +1,6 @@
-import { PrismaClient } from '@prisma/client'
 import AppErrorConstructor from '../Errors/errorConstructor'
-const prisma = new PrismaClient()
+import prisma from "../libs/prisma/prisma";
+
 
 export default async function deleteExercice(id: string) {
     

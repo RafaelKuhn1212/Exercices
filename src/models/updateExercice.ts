@@ -1,7 +1,6 @@
-import { Prisma, PrismaClient } from '@prisma/client'
+import prisma from "../libs/prisma/prisma";
 import exerciceUpdateDTO from '../interfaces/exerciceUpdateDTO'
 import AppErrorConstructor from '../Errors/errorConstructor'
-const prisma = new PrismaClient()
 
 export default async function updateExercice(data: exerciceUpdateDTO){
 

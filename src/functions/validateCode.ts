@@ -7,7 +7,6 @@ export default async function validateCode(exerciceId: string, code: string): Pr
         const exercice = await getInfoFromExercice(exerciceId)
         const tests = exercice?.tests
 
-
         return Promise.all(
             tests?.map(async (test, i) => {
 
@@ -17,14 +16,13 @@ export default async function validateCode(exerciceId: string, code: string): Pr
                     const compilerService = new compiler()
 
                     const result = await compilerService.runCode(code, tests[i].input)
-                    console.log(result)
+
                     if (result !== tests[i].output) {
                         reject({ errorOn: i, expected: tests[i].output, got: result })
                     }
                     resolve(true)
 
                 } catch (error) {
-                    console.log(error)
                     reject(error)
                 }
 

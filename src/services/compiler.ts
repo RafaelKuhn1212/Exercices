@@ -12,6 +12,7 @@ export default class CompilerService {
             code,
             inputs: entries?.join(",")
             },{headers:{"Content-Type":"application/json"}});
+            console.log(result.data);
             if(result.data.err) throw new appErrorConstructor(`Erro ao compilar seu programa da resolucao: ${result.data.err}`,500);
             return result.data.result;
         } catch (error) {

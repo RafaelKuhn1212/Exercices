@@ -12,6 +12,7 @@ export default function validateJWT(req: any, res: any, next: any) {
             if(err) throw new AppErrorConstructor("invalid token", 401)
             if(!decoded.id) throw new AppErrorConstructor("invalid token", 401)
             req.body.userId = decoded.id
+            req.user = decoded.id
             next()
         })
 

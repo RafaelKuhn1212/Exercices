@@ -14,8 +14,6 @@
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
 
-    <!-- and it's easy to individually load additional languages -->
-
     <script>
   
 
@@ -34,7 +32,7 @@
                 "Access-Control-Allow-Origin": "*",
                 "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
                 
-                "name": localStorage.getItem("name")
+                "token": localStorage.getItem("token")
             },
         }).then(async (response) => {
             const data = await response.json();
@@ -54,13 +52,8 @@
     }
 
     function onLoad(){
-        if(localStorage.getItem("name") == null){
-            const nome = prompt("Digite seu nome");
-            if(nome == ""){
-                alert("Você precisa digitar seu nome para continuar");
-                onLoad();
-            }
-            localStorage.setItem("name", nome);
+        if(localStorage.getItem("token") == null){
+            window.location.href = '/frontend/auth/login/index.html'
         }
         loadExercice()
     }
@@ -73,7 +66,8 @@
                 "Accept": "application/json",
                 "Access-Control-Allow-Origin": "*",
                 "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-                        
+                "token": localStorage.getItem("token")
+    
             },
             body: JSON.stringify({
                 exerciceId: document.exerciceId,
@@ -102,8 +96,14 @@
 
 <h4 id="enunciado">Enunciado</h4>
 
-<pre><textarea class="hljs portugol" id="codigo" contenteditable="true" spellcheck="false"></textarea></pre>
 <button onclick="enviar()">Enviar</button>
+<pre><textarea onkeydown="if(event.keyCode===9){var v=this.value,s=this.selectionStart,e=this.selectionEnd;this.value=v.substring(0, s)+'\t'+v.substring(e);this.selectionStart=this.selectionEnd=s+1;return false;}" class="hljs portugol" id="codigo" contenteditable="true" spellcheck="false">
+    programa{
+        funcao inicio(){
+
+        }
+    }
+</textarea></pre>
 
 </body>
 </html>

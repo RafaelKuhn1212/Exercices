@@ -1,7 +1,7 @@
-import { PrismaClient } from "@prisma/client";
 import AppErrorConstructor from "../../Errors/errorConstructor";
+import prisma from "../../libs/prisma/prisma";
 import { checkIfUserExists } from "../checkIfUserExists";
-const prisma = new PrismaClient();
+
 
 import bcrypt from "bcrypt";
 

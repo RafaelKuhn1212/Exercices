@@ -1,8 +1,7 @@
-import { PrismaClient } from "@prisma/client";
 import { compare } from "bcrypt";
 import AppErrorConstructor from "../../Errors/errorConstructor";
 
-const prisma = new PrismaClient();
+import prisma from "../../libs/prisma/prisma";
 
 export default async function login(user:string,pass:string){
 

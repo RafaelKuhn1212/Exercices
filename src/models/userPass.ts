@@ -3,11 +3,11 @@ import { checkIfUserExists } from './checkIfUserExists'
 import AppErrorConstructor from '../Errors/errorConstructor'
 const prisma = new PrismaClient()
 
-export const userPass = async (name: string, exerciceId: string) => {
+export const userPass = async (id: string, exerciceId: string) => {
 
-        await prisma.user.update({
+    await prisma.user.update({
             where: {
-                name: name
+                id
             },
             data: {
                 exercisesDone:{

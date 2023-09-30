@@ -1,10 +1,9 @@
-import { Prisma, PrismaClient } from '@prisma/client'
-const prisma = new PrismaClient()
 
 import exerciceDTO from "../interfaces/exerciceDTO";
 import testCasesDTO from "../interfaces/testCasesDTO";
 import checkIfExerciceExists from './checkIfExerciceExists';
 import AppErrorConstructor from '../Errors/errorConstructor';
+import prisma from "../libs/prisma/prisma";
 
 export default async function addExerciceToDB(exercice:exerciceDTO,testCases:testCasesDTO){
 
