@@ -24,7 +24,6 @@
 
     function loadExercice(){
         
-        console.log("a")
         fetch("http://localhost:3000/exercice/",{
             headers: {
                 "Content-Type": "application/json",
@@ -37,6 +36,11 @@
         }).then(async (response) => {
             const data = await response.json();
             
+            if(response.status == 404){
+                localStorage.removeItem("token");
+                window.location.href = '/frontend/auth/login/index.html'
+            }
+
             if(response.status == 500){
                 alert(data.message);
                 loadExercice();
