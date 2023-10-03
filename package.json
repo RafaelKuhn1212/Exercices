@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "env-cmd -f .env ts-node-dev --respawn src/index.ts",
+    "start": "env-cmd -f .env ts-node-dev --transpile-only --respawn src/index.ts",
     "test": "env-cmd -f .env.test vitest --no-threads"
   },
   "keywords": [],

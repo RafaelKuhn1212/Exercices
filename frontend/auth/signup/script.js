@@ -5,9 +5,21 @@ https://dribbble.com/shots/2292415-Daily-UI-001-Day-001-Sign-Up
 
 */
 function onload(){
-  if(localStorage.getItem('token') != null){
-      window.location.href = "/frontend/index.html";
-  }
+  fetch("http://localhost:3000/auth",{
+            method: "GET",
+            body: JSON.stringify({
+                token: localStorage.getItem("token")
+            }),
+        }).then(async (response) => {
+            const data = await response.json();
+            
+            if(data.valid == true){
+                localStorage.removeItem("token");
+                window.location.href = '/frontend/index.html'
+            }
+
+        }).catch((err) => {
+        })
 }
 
 function signUp(){
@@ -18,7 +30,6 @@ function signUp(){
                   "Content-Type": "application/json",
                   "Accept": "application/json",
                   "Access-Control-Allow-Origin": "*",
-                  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
                           
               },
               body: JSON.stringify({

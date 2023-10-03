@@ -8,10 +8,9 @@ import AppErrorConstructor from '../Errors/errorConstructor';
   };
 
   export default function validateBody(schema:Schema) {
-
     return async (req: Request, res: Response, next: NextFunction) => {
       try {
-        
+        console.log(req.body)
         req.body = await schema.validate(req.body, schemaOptions);
         next();
       } catch (error:any) {
