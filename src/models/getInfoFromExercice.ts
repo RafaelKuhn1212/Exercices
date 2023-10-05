@@ -17,7 +17,7 @@ export default async function getInfoFromExercice(id: string) {
         return exercice
 
     } catch (error) {
-        console.log(error)
+        
         if(error instanceof AppErrorConstructor) throw error
         throw new AppErrorConstructor("Database error", 500)
 

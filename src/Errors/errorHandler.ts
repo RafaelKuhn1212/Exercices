@@ -9,7 +9,7 @@ export default function errorHandler(err:AppError,req:Request,res:Response,next:
         res.status(err.code || 500).json({message:err.message})
     }
     else{
-        console.log(err)
+        
         res.status(500).json({message:"Internal server error"})
     }
     next()

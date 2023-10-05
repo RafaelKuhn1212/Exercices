@@ -12,21 +12,16 @@ export default async function getExercice(name: string) {
             exercisesDone: true
         }
     })
-
-    if(!user){
-        const randomExercice = await prisma.exercice.findFirst({
-            orderBy: {
-                id: 'desc'
-            }
-        })
-        return randomExercice
-    }else{
-
+    if (user == undefined) throw new AppErrorConstructor("User not found", 404)
+    
         const difficulty = await getUserDifficult(name)
 
         if(difficulty == 6){
             const randomExercice = await prisma.exercice.findMany()
-            return randomExercice[Math.floor(Math.random() * randomExercice.length)]
+            return {
+                hasDoneAll: true,
+                exercice: randomExercice[Math.floor(Math.random() * randomExercice.length)]
+            }
         }
 
         const exerciceDone = user.exercisesDone.map(exercice => exercice.id)
@@ -42,7 +37,8 @@ export default async function getExercice(name: string) {
             }
         })
         
-        return randomExercice
+        return {
+            hasDoneAll: false,
+            exercice: randomExercice
+        }
     }    
-
-}
