@@ -8,7 +8,6 @@ import AppErrorConstructor from '../Errors/errorConstructor';
   };
 
   export default function validateBody(schema:Schema) {
-
     return async (req: Request, res: Response, next: NextFunction) => {
       try {
         

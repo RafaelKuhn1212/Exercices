@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="index.css">
+
+    <link rel="stylesheet" href="portugol-studio-dark.css">
+
+    <title>Document</title>
+</head>
+
+<body onload="onLoad()">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+
+    <script>
+
+
+    </script>
+
+
+    <script>
+
+        function loadExercice() {
+
+            var myHeaders = new Headers();
+            myHeaders.append("token", localStorage.getItem("token"));
+
+            var requestOptions = {
+                method: 'GET',
+                headers: myHeaders,
+                redirect: 'follow'
+            };
+
+
+            fetch("http://localhost:3000/exercice/", requestOptions)
+                .then(async (response) => {
+                    const data = await response.json();
+
+                    if(response.status == 200){
+                        
+                        if(data.hasDoneAll){
+                            alert("Você já fez todos os exercícios");
+                        }
+
+                        document.exerciceId = data.exercice.id;
+                        document.getElementById("enunciado").innerHTML = data.exercice.statement;
+                    }else{
+                        throw new Error(data.message || "Erro ao carregar exercício");
+                    }
+                    
+                }).catch((err) => {    
+                    localStorage.removeItem("token");
+                    window.location.href = '/login'
+                    alert(err);
+                })
+
+        }
+
+        async function onLoad() {
+
+            try {
+
+                var myHeaders = new Headers();
+                myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
+
+                var urlencoded = new URLSearchParams();
+                urlencoded.append("token", localStorage.getItem("token"));
+
+                var requestOptions = {
+                    method: 'POST',
+                    headers: myHeaders,
+                    body: urlencoded,
+                    redirect: 'follow'
+                };
+
+                const response = await fetch("http://127.0.0.1:3000/auth/", requestOptions)
+
+                const data = await response.json();
+                
+
+                if (data.valid != true) {
+                    alert("Token inválido");
+                    localStorage.removeItem("token");
+                    window.location.href = '/login'
+                }
+
+                loadExercice()
+
+            } catch (err) {
+                
+                localStorage.removeItem("token");
+                window.location.href = '/login'
+            }
+
+        }
+        function enviar() {
+            const codigo = document.getElementById("codigo").value;
+            fetch("http://localhost:3000/exercice/submit", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",
+                    "Access-Control-Allow-Origin": "*",
+                    "token": localStorage.getItem("token")
+
+                },
+                body: JSON.stringify({
+                    exerciceId: document.exerciceId,
+                    code: codigo,
+                    name: localStorage.getItem("name"),
+                })
+            }).then(async (response) => {
+
+                const data = await response.json();
+
+                if (response.status == 200) {
+                    alert(data.message)
+                    loadExercice()
+
+                } else {
+                    throw new Error(data.message || "Erro ao enviar exercício");
+                }
+
+            }).catch((err) => {
+                alert(err);
+            })
+        }
+    </script>
+
+    <h4 id="enunciado">Enunciado</h4>
+
+    <button onclick="enviar()">Enviar</button>
+    <pre><textarea onkeydown="if(event.keyCode===9){var v=this.value,s=this.selectionStart,e=this.selectionEnd;this.value=v.substring(0, s)+'\t'+v.substring(e);this.selectionStart=this.selectionEnd=s+1;return false;}" class="hljs portugol" id="codigo" contenteditable="true" spellcheck="false">
+    programa{
+        funcao inicio(){
+
+        }
+    }
+</textarea></pre>
+
+</body>
+
+</html>

@@ -1,6 +1,5 @@
-import { PrismaClient } from '@prisma/client'
 import AppErrorConstructor from '../Errors/errorConstructor'
-const prisma = new PrismaClient()
+import prisma from "../libs/prisma/prisma";
 
 export default async function getInfoFromExercice(id: string) {
     try {
@@ -18,7 +17,7 @@ export default async function getInfoFromExercice(id: string) {
         return exercice
 
     } catch (error) {
-        console.log(error)
+        
         if(error instanceof AppErrorConstructor) throw error
         throw new AppErrorConstructor("Database error", 500)
 
