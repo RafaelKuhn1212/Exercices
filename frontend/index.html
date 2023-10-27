@@ -5,38 +5,42 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
     <link rel="stylesheet" href="index.css">
-
     <link rel="stylesheet" href="portugol-studio-dark.css">
+    <link rel="stylesheet" href="codemirror.css"/>
+    <link rel="stylesheet" href="3024-night.css"/>
 
     <title>Document</title>
 </head>
 
 <body onload="onLoad()">
-
+    <script src="codemirror.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+    <script src="portugol.js"></script>
     <body onload="onLoad()">
         <div id="container">
             <div id="enunciado"><button id="botaoSubmit"onclick="enviar()">Enviar</button> <p id="enunciadotext"></p></div>
             <div id="errode">
                 <div id="code">
-                    <pre><textarea onkeydown="if(event.keyCode===9){var v=this.value,s=this.selectionStart,e=this.selectionEnd;this.value=v.substring(0, s)+'\t'+v.substring(e);this.selectionStart=this.selectionEnd=s+1;return false;}" class="hljs portugol" id="codigo" contenteditable="true" spellcheck="false">
+                    <textarea id="codigo">
 programa{
     funcao inicio(){
                 
     }
 }
-                </textarea></pre></div>
+                </textarea></div>
                 <div id="error">erro</div>
             </div>
         </div>
     <script>
 
 
-    </script>
+    </script>    
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/codemirror.min.css">
 
-    <script>
+<script>
 
         function loadExercice() {
 
@@ -73,8 +77,15 @@ programa{
                 })
 
         }
-
+        var editor = CodeMirror.fromTextArea(document.getElementById("codigo"), {
+        lineNumbers: true, 
+    theme: "3024-night",
+    mode: "portugol",
+}   ); 
+    editor.setSize("100%", "100%");
         async function onLoad() {
+
+
 
             try {
 
@@ -112,7 +123,7 @@ programa{
 
         }
         function enviar() {
-            const codigo = document.getElementById("codigo").value;
+            const codigo = editor.getValue();
             fetch("http://localhost:3000/exercice/submit", {
                 method: "POST",
                 headers: {
@@ -125,7 +136,6 @@ programa{
                 body: JSON.stringify({
                     exerciceId: document.exerciceId,
                     code: codigo,
-                    name: localStorage.getItem("name"),
                 })
             }).then(async (response) => {
 

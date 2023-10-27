@@ -46,6 +46,19 @@ body, head{
     vertical-align: middle;
 }
 
+.cm-bracket {
+    color: #444444 !important; 
+    font-weight: bold;
+}
+.cm-programa{
+    color: #424242 !important; 
+    font-weight: bold;
+}
+.cm-inicio{
+    color: #6e6e6e !important; 
+    font-weight: bold;
+}
+
 #enunciado{
     color: white;
     border: 2px solid rgb(21, 182, 16);

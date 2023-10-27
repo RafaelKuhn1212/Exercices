@@ -23,21 +23,22 @@ export default function expressConfig(): Express {
             origin: '*'
         }
     ));
-
+    
+    app.use(express.static('/home/rafa/Rdisk/AutomaticProjects/Exercices/frontend'))
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
 
     //Configure routes
 
     app.get("/", (req, res) => {
-        res.sendFile("R:\\AutomaticProjects\\Exercices\\frontend\\index.html")
+        res.sendFile("/home/rafa/Rdisk/AutomaticProjects/Exercices/frontend/index.html")
     })
 
     app.get("/login", (req, res) => {
-        res.sendFile("R:\\AutomaticProjects\\Exercices\\frontend\\auth\\login\\index.html")
+        res.sendFile("/home/rafa/Rdisk/AutomaticProjects/Exercices/frontend/auth/login/index.html")
     })
     app.get("/signup", (req, res) => {
-        res.sendFile("R:\\AutomaticProjects\\Exercices\\frontend\\auth\\signup\\index.html")
+        res.sendFile("/home/rafa/Rdisk/AutomaticProjects/Exercices/frontend/auth/signup/index.html")
     })
     
     app.use("/auth", authRoutes.signUpRoute)
