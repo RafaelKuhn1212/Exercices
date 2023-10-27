@@ -7,13 +7,16 @@
 }
 #enunciado {
     width: 50%;
-
+    font-size: 70%;
     font-family: "Roboto Mono", monospace;
+    overflow: auto;
+    white-space: nowrap;
 }
 body, head{
     background-color: black;
     width:  100%;
     height: 100vh;
+    overflow: hidden
 }
 #container{
     display: flex;
@@ -22,12 +25,30 @@ body, head{
 }
 
 #error{   
-    color: white;
+    color: rgb(255, 0, 0);
     border: 2px solid rgb(21, 182, 16);
     height: 100vh;
-    width:  15%;
+    width:  20%;
+    padding: 0.3%;
+    font-size: 70%;
     background-color:rgb(43, 40, 40);
 }
+
+@media (max-width: 600px) {
+    #error {
+        display: none;
+        width: 0%;
+        height: 0%;
+        z-index: 0;
+    }
+
+    #code {
+        width: 100% !important;
+        z-index: 1;
+    }
+}
+
+
 
 #botaoSubmit{
     width: fit-content;
@@ -35,8 +56,9 @@ body, head{
     display: inline;
     background-color: rgb(26, 179, 21);
     border-color: rgb(26, 179, 21);    
-    
+    height: 100%;
 }
+
 
 #enunciadotext{
     display: inline;
@@ -44,6 +66,7 @@ body, head{
     color: white;
     text-align: center;
     vertical-align: middle;
+    height: 100%;
 }
 
 .cm-bracket {

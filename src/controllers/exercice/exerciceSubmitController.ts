@@ -15,7 +15,7 @@ const validate = await validateCode(req.body.exerciceId, req.body.code)
 if(validate.error instanceof AppErrorConstructor) throw new AppErrorConstructor(validate.error.message, 500)
 else{
 
-    if(validate.passed == false) throw new AppErrorConstructor(`Erro no teste ${validate.error?.errorOn} do seu programa da resolucao: Esperado ${validate.error?.expected} mas obteve ${validate.error?.got}`,500)
+    if(validate.passed == false) throw new AppErrorConstructor(`Erro no teste ${validate.error?.errorOn} do seu programa da resolucao: Esperado ${validate.error?.expected} mas obteve: ${validate.error?.got == "" ? "Resposta vazia" : validate.error?.got}`,500)
     if(validate.passed == true) {
 
         await userPass(((req as any).user), req.body.exerciceId)

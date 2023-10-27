@@ -4,12 +4,11 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="index.css">
     <link rel="stylesheet" href="portugol-studio-dark.css">
-    <link rel="stylesheet" href="codemirror.css"/>
-    <link rel="stylesheet" href="3024-night.css"/>
+    <link rel="stylesheet" href="codemirror.css" />
+    <link rel="stylesheet" href="3024-night.css" />
 
     <title>Document</title>
 </head>
@@ -18,9 +17,12 @@
     <script src="codemirror.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
     <script src="portugol.js"></script>
+
     <body onload="onLoad()">
         <div id="container">
-            <div id="enunciado"><button id="botaoSubmit"onclick="enviar()">Enviar</button> <p id="enunciadotext"></p></div>
+            <div id="enunciado"><button id="botaoSubmit" onclick="enviar()">Enviar</button>
+                <p id="enunciadotext"></p>
+            </div>
             <div id="errode">
                 <div id="code">
                     <textarea id="codigo">
@@ -29,135 +31,227 @@ programa{
                 
     }
 }
-                </textarea></div>
-                <div id="error">erro</div>
+                </textarea>
+                </div>
+                <div id="error"></div>
             </div>
         </div>
-    <script>
+
+        <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/codemirror.min.css">
+
+        <script>
 
 
-    </script>    
+function extractLinesFromTextNode( textNode ) {
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/codemirror.min.css">
+if ( textNode.nodeType !== 3 ) {
 
-<script>
+    throw( new Error( "Lines can only be extracted from text nodes." ) );
 
-        function loadExercice() {
+}
 
-            var myHeaders = new Headers();
-            myHeaders.append("token", localStorage.getItem("token"));
+textNode.textContent = collapseWhiteSpace( textNode.textContent );
 
-            var requestOptions = {
-                method: 'GET',
-                headers: myHeaders,
-                redirect: 'follow'
-            };
+var textContent = textNode.textContent;
+var range = document.createRange();
+var lines = [];
+var lineCharacters = [];
 
+for ( var i = 0 ; i < textContent.length ; i++ ) {
 
-            fetch("http://localhost:3000/exercice/", requestOptions)
-                .then(async (response) => {
-                    const data = await response.json();
+    range.setStart( textNode, 0 );
+    range.setEnd( textNode, ( i + 1 ) );
 
-                    if(response.status == 200){
-                        
-                        if(data.hasDoneAll){
-                            alert("Você já fez todos os exercícios");
-                        }
+    var lineIndex = ( range.getClientRects().length - 1 );
 
-                        document.exerciceId = data.exercice.id;
-                        document.getElementById("enunciadotext").innerHTML = data.exercice.statement;
-                    }else{
-                        throw new Error(data.message || "Erro ao carregar exercício");
-                    }
-                    
-                }).catch((err) => {    
-                    localStorage.removeItem("token");
-                    window.location.href = '/login'
-                    alert(err);
-                })
+    if ( ! lines[ lineIndex ] ) {
 
-        }
-        var editor = CodeMirror.fromTextArea(document.getElementById("codigo"), {
-        lineNumbers: true, 
-    theme: "3024-night",
-    mode: "portugol",
-}   ); 
-    editor.setSize("100%", "100%");
-        async function onLoad() {
+        lines.push( lineCharacters = [] );
+
+    }
+
+    lineCharacters.push( textContent.charAt( i ) );
+
+}
 
 
+lines = lines.map(
+    function operator( characters ) {
 
-            try {
+        return( collapseWhiteSpace( characters.join( "" ) ) );
+
+    }
+);
+
+return(arrayFrom(range.getClientRects()));
+
+}
+function arrayFrom( arrayLike ) {
+
+return( Array.prototype.slice.call( arrayLike ) );
+
+}
+function collapseWhiteSpace( value ) {
+
+return( value.trim().replace( /\s+/g, " " ) );
+
+}
+function isSmallScreen() {
+                return window.innerWidth < 700 || window.innerHeight < 300;
+            }
+
+            function loadError(msg){
+                if (isSmallScreen()) {
+                    swal({
+                        title: "Erro",
+                        text: msg.toString(),
+                        icon: "error",
+                        button: "Ok",
+                    });
+                }
+                else {
+                    swal({
+                        title: "Erro",
+                        text: msg.toString(),
+                        icon: "error",
+                        button: "Ok",
+                    });
+                    document.getElementById("error").innerHTML = `${new Date().toLocaleTimeString()} - ${msg.toString()}` + "<br>" + document.getElementById("error").innerHTML;
+                }
+
+            }
+
+            function loadExercice() {
 
                 var myHeaders = new Headers();
-                myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
-
-                var urlencoded = new URLSearchParams();
-                urlencoded.append("token", localStorage.getItem("token"));
+                myHeaders.append("token", localStorage.getItem("token"));
 
                 var requestOptions = {
-                    method: 'POST',
+                    method: 'GET',
                     headers: myHeaders,
-                    body: urlencoded,
                     redirect: 'follow'
                 };
 
-                const response = await fetch("http://127.0.0.1:3000/auth/", requestOptions)
 
-                const data = await response.json();
-                
+                fetch("http://localhost:3000/exercice/", requestOptions)
+                    .then(async (response) => {
+                        const data = await response.json();
 
-                if (data.valid != true) {
-                    alert("Token inválido");
+                        if (response.status == 200) {
+
+                            if (data.hasDoneAll) {
+                                loadError("Você já fez todos os exercícios");
+                            }
+
+                            document.exerciceId = data.exercice.id;
+                            document.getElementById("enunciadotext").innerHTML = data.exercice.statement;
+                        } else {
+                            throw new Error(data.message || "Erro ao carregar exercício");
+                        }
+
+                    }).catch((err) => {
+                        localStorage.removeItem("token");
+                        window.location.href = '/login'
+                        loadError(err);
+                    })
+
+            }
+            var editor = CodeMirror.fromTextArea(document.getElementById("codigo"), {
+                lineNumbers: true,
+                theme: "3024-night",
+                mode: "portugol",
+            });
+            editor.setSize("100%", "100%");
+
+            window.onresize = event => {
+                editor.setSize("100%", "100%");
+                if(extractLinesFromTextNode(document.getElementById("enunciadotext").firstChild).length > 1){
+                    console.log("a")
+                }
+
+            };
+            async function onLoad() {
+
+
+
+                try {
+
+                    var myHeaders = new Headers();
+                    myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
+
+                    var urlencoded = new URLSearchParams();
+                    urlencoded.append("token", localStorage.getItem("token"));
+
+                    var requestOptions = {
+                        method: 'POST',
+                        headers: myHeaders,
+                        body: urlencoded,
+                        redirect: 'follow'
+                    };
+
+                    const response = await fetch("http://127.0.0.1:3000/auth/", requestOptions)
+
+                    const data = await response.json();
+
+
+                    if (data.valid != true) {
+                        loadError("Token inválido");
+                        localStorage.removeItem("token");
+                        window.location.href = '/login'
+                    }
+
+                    loadExercice()
+
+                } catch (err) {
+
                     localStorage.removeItem("token");
                     window.location.href = '/login'
                 }
 
-                loadExercice()
-
-            } catch (err) {
-                
-                localStorage.removeItem("token");
-                window.location.href = '/login'
             }
+            function enviar() {
+                const codigo = editor.getValue();
+                fetch("http://localhost:3000/exercice/submit", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Accept": "application/json",
+                        "Access-Control-Allow-Origin": "*",
+                        "token": localStorage.getItem("token")
 
-        }
-        function enviar() {
-            const codigo = editor.getValue();
-            fetch("http://localhost:3000/exercice/submit", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Accept": "application/json",
-                    "Access-Control-Allow-Origin": "*",
-                    "token": localStorage.getItem("token")
+                    },
+                    body: JSON.stringify({
+                        exerciceId: document.exerciceId,
+                        code: codigo,
+                    })
+                }).then(async (response) => {
 
-                },
-                body: JSON.stringify({
-                    exerciceId: document.exerciceId,
-                    code: codigo,
+                    const data = await response.json();
+
+                    if (response.status == 200) {
+                        swal({
+                            title: "Sucesso",
+                            text: data.message,
+                            icon: "success",
+                            button: "Ok",
+                        })
+                        loadExercice()
+
+                    } else {
+                        throw new Error(data.message || "Erro ao enviar exercício");
+                    }
+
+                }).catch((err) => {
+                    loadError(err);
                 })
-            }).then(async (response) => {
-
-                const data = await response.json();
-
-                if (response.status == 200) {
-                    alert(data.message)
-                    loadExercice()
-
-                } else {
-                    throw new Error(data.message || "Erro ao enviar exercício");
-                }
-
-            }).catch((err) => {
-                alert(err);
-            })
-        }
-    </script>
+            }
+        </script>
 
 
-    
 
-</body>
+
+    </body>
 
 </html>
