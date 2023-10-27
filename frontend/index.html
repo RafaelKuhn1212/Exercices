@@ -15,7 +15,21 @@
 <body onload="onLoad()">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
-
+    <body onload="onLoad()">
+        <div id="container">
+            <div id="enunciado"><button id="botaoSubmit"onclick="enviar()">Enviar</button> <p id="enunciadotext"></p></div>
+            <div id="errode">
+                <div id="code">
+                    <pre><textarea onkeydown="if(event.keyCode===9){var v=this.value,s=this.selectionStart,e=this.selectionEnd;this.value=v.substring(0, s)+'\t'+v.substring(e);this.selectionStart=this.selectionEnd=s+1;return false;}" class="hljs portugol" id="codigo" contenteditable="true" spellcheck="false">
+programa{
+    funcao inicio(){
+                
+    }
+}
+                </textarea></pre></div>
+                <div id="error">erro</div>
+            </div>
+        </div>
     <script>
 
 
@@ -47,7 +61,7 @@
                         }
 
                         document.exerciceId = data.exercice.id;
-                        document.getElementById("enunciado").innerHTML = data.exercice.statement;
+                        document.getElementById("enunciadotext").innerHTML = data.exercice.statement;
                     }else{
                         throw new Error(data.message || "Erro ao carregar exercício");
                     }
@@ -131,16 +145,8 @@
         }
     </script>
 
-    <h4 id="enunciado">Enunciado</h4>
 
-    <button onclick="enviar()">Enviar</button>
-    <pre><textarea onkeydown="if(event.keyCode===9){var v=this.value,s=this.selectionStart,e=this.selectionEnd;this.value=v.substring(0, s)+'\t'+v.substring(e);this.selectionStart=this.selectionEnd=s+1;return false;}" class="hljs portugol" id="codigo" contenteditable="true" spellcheck="false">
-    programa{
-        funcao inicio(){
-
-        }
-    }
-</textarea></pre>
+    
 
 </body>
 

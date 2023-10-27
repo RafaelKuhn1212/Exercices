@@ -13,7 +13,7 @@ export default async function getInfo(request: request.SuperTest<request.Test>) 
     })
     if(create.statusCode !== 201) throw new Error("Error creating user")
     const token = await request.post("/auth/login").send({
-        username: user,
+        username: user,  
         password: password
     })
     if(token.statusCode !== 200) throw new Error("Error getting token")
