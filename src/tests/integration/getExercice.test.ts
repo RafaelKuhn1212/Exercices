@@ -6,6 +6,7 @@ import app from "../../config/expressConfig"
 import setPermToUser from "../functions/setPermToUser";
 import { PrismaClient } from "@prisma/client";
 import { faker } from "@faker-js/faker";
+import getRandomSupportedLanguage from "../functions/getRandomSupportedLanguage";
 
 const request = supertest(app())
 
@@ -42,16 +43,18 @@ it("should return a exercice if there is one", async () => {
 
     const exercice = await prisma.exercice.create({
         data:{
+            language:getRandomSupportedLanguage(),
             statement:exerciceData.statement,
             difficulty:exerciceData.difficulty,
         }
     })
     expect(exercice).toBeDefined()
 
-    const response = await request.get("/exercice").set({
+    const response = await request.post("/exercice").send({
+        language:exercice.language,
+    }).set({
         token:info.jwt
     })
-
-    expect(response.body.statement).toBe(exerciceData.statement)
+    expect(response.body.exercice.statement).toBe(exerciceData.statement)
 
 })

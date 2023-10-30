@@ -118,6 +118,25 @@ body {
 .login-form .action button:nth-child(2):hover {
   background: #3c4d6d;
 }
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  /* Add some styling */
+  
+  width: 100%;
+  max-width: 320px;
+  height: 50px;
+  padding: 0px 24px;
+  font-size: 16px;
+  line-height: 1.75;
+  color: #333;
+  background-color: #ffffff;
+  background-image: none;
+  border: 1px solid #cccccc;
+  -ms-word-break: normal;
+  word-break: normal;
+}
 </style>
 
 <script>
@@ -166,7 +185,7 @@ fetch("http://127.0.0.1:3000/auth/login",{
             if(response.status == 200){
                 
               localStorage.setItem('token', data.token);
-              window.location.href = "/";
+              window.location.href = "/?language="+document.getElementById('language').value;
 
             }else{
                 alert(data.message);
@@ -179,6 +198,11 @@ fetch("http://127.0.0.1:3000/auth/login",{
   return false;
 }
 </script>
+
+<select id="language">
+  <option value="c">c</option>
+  <option value="portugol">portugol</option>
+</select>
 
 <div class="login-form">
     <h1>Login</h1>

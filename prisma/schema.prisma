@@ -14,9 +14,15 @@ model exercice {
   createdAt  DateTime        @default(now())
   updatedAt  DateTime        @updatedAt
 
+  language languageSupported
   doneBy     user[]
 
   tests      tests[]
+}
+
+enum languageSupported{
+  portugol
+  c
 }
 
 model user {

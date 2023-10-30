@@ -1,7 +1,9 @@
 import express from "express";
-import getExercice from "../../controllers/exercice/exerciceGetController";
+import validateBody from "../../middleware/validateBody";
+import getExerciceSchema from "../../schemas/getExercicesSchema";
+import getExerciceController from "../../controllers/exercice/exerciceGetController";
 const Router = express.Router();
 
-Router.get("/",getExercice)
+Router.post("/",validateBody(getExerciceSchema),getExerciceController)
 
 export default Router;

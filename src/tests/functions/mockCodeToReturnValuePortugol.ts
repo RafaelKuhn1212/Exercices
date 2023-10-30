@@ -1,4 +1,4 @@
-export default function mockCodeToReturnValue(value: string): any {
+export default function mockCodeToReturnValuePortugol(value: string): any {
 
     return `
         programa{

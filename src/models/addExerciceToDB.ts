@@ -8,7 +8,6 @@ import prisma from "../libs/prisma/prisma";
 export default async function addExerciceToDB(exercice:exerciceDTO,testCases:testCasesDTO){
 
 try {
-
     if(await checkIfExerciceExists(exercice.statement)){
         throw new AppErrorConstructor("Exercice with same statement already exists",400)
     }
@@ -16,6 +15,7 @@ try {
         data:{
             statement:exercice.statement,
             difficulty:exercice.difficulty,
+            language:exercice.language,
             tests:{
                 
                 create:testCases.testCases.map(testCase => {

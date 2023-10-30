@@ -42,7 +42,7 @@ programa{
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.62.0/codemirror.min.css">
 
         <script>
-
+var language
 
 function extractLinesFromTextNode( textNode ) {
 
@@ -103,6 +103,7 @@ function isSmallScreen() {
             }
 
             function loadError(msg){
+                alert(msg);
                 if (isSmallScreen()) {
                     swal({
                         title: "Erro",
@@ -124,21 +125,24 @@ function isSmallScreen() {
             }
 
             function loadExercice() {
-
-                var myHeaders = new Headers();
-                myHeaders.append("token", localStorage.getItem("token"));
-
-                var requestOptions = {
-                    method: 'GET',
-                    headers: myHeaders,
-                    redirect: 'follow'
-                };
-
-
-                fetch("http://localhost:3000/exercice/", requestOptions)
+                
+                fetch("http://localhost:3000/exercice/", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Accept": "application/json",
+                            "Access-Control-Allow-Origin": "*",
+                            "token": localStorage.getItem("token")
+                        },
+                        body: JSON.stringify({
+                            language
+                        })
+                })
                     .then(async (response) => {
                         const data = await response.json();
-
+                        if(!data.exercice && data.hasDoneAll){
+                            throw new Error(data.message || "Sem exercícios disponíveis");
+                        }
                         if (response.status == 200) {
 
                             if (data.hasDoneAll) {
@@ -152,29 +156,43 @@ function isSmallScreen() {
                         }
 
                     }).catch((err) => {
+                        loadError(err);
                         localStorage.removeItem("token");
                         window.location.href = '/login'
-                        loadError(err);
                     })
 
             }
-            var editor = CodeMirror.fromTextArea(document.getElementById("codigo"), {
+           
+            if(language == "portugol"){
+                var editor = CodeMirror.fromTextArea(document.getElementById("codigo"), {
                 lineNumbers: true,
                 theme: "3024-night",
                 mode: "portugol",
             });
+            }else{
+                var editor = CodeMirror.fromTextArea(document.getElementById("codigo"), {
+                lineNumbers: true,
+                theme: "3024-night",
+                mode: "c",
+            });
+            }
+            
             editor.setSize("100%", "100%");
 
             window.onresize = event => {
                 editor.setSize("100%", "100%");
                 if(extractLinesFromTextNode(document.getElementById("enunciadotext").firstChild).length > 1){
-                    console.log("a")
                 }
 
             };
             async function onLoad() {
-
-
+                const urlParams = new URLSearchParams(window.location.search);
+                language = urlParams.get('language');
+                if(!language){
+                    alert("Linguagem não especificada");
+                }else if(language != "portugol" && language != "c"){
+                    alert("Linguagem inválida");
+                }
 
                 try {
 
@@ -195,9 +213,9 @@ function isSmallScreen() {
 
                     const data = await response.json();
 
-
                     if (data.valid != true) {
                         loadError("Token inválido");
+                        console.log(data)
                         localStorage.removeItem("token");
                         window.location.href = '/login'
                     }
@@ -205,7 +223,10 @@ function isSmallScreen() {
                     loadExercice()
 
                 } catch (err) {
-
+                    console.log(err)
+                    console.log("aaaaaaaaa")
+                    alert("Erro ao carregar exercício");
+                    loadError(err);
                     localStorage.removeItem("token");
                     window.location.href = '/login'
                 }

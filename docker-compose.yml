@@ -1,4 +1,5 @@
 version: "3"
+
 services:
   backend:
     build: .
@@ -11,7 +12,12 @@ services:
     networks:
       - default
   compiler:
-    image: rafaelkuhn/compiler
+    image: 
+    container_name: compiler
+    networks:
+      - default
+    c-compiler:
+    image: 
     container_name: compiler
     networks:
       - default

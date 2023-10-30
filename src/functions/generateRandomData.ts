@@ -2,7 +2,7 @@ export default class randomDataGenerator{
 
     constructor(){}
 
-    lazyGen(inputs:string[]){
+    lazyGen(inputs:string[],language:string){
         let result:any = [];
         for(let i = 0; i < inputs.length; i++){
 
@@ -20,7 +20,11 @@ export default class randomDataGenerator{
                     result.push(this.generateRandomChar());
                     break;
                 case 'logico':
-                    result.push(this.generateRandomBool());
+                if(language == "c"){
+                    result.push(this.generateRandomBoolC());
+                    break;
+                }
+                    result.push(this.generateRandomBoolPORTUGOL());
                     break;
             }
 
@@ -46,9 +50,13 @@ export default class randomDataGenerator{
     generateRandomChar(){
         return String.fromCharCode(this.generateRandomInt(65, 90));
     }
-    generateRandomBool(){
+    generateRandomBoolPORTUGOL(){
         if (Math.random() >= 0.5) return "verdadeiro";
         else return "falso"; 
+    }
+    generateRandomBoolC(){
+        if (Math.random() >= 0.5) return "true";
+        else return "false"; 
     }
 
 }

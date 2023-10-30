@@ -5,6 +5,7 @@ import supertest from "supertest";
 import app from "../../config/expressConfig";
 import { PrismaClient } from "@prisma/client";
 import { faker } from "@faker-js/faker";
+import getRandomSupportedLanguage from "../functions/getRandomSupportedLanguage";
 
 const request = supertest(app())
 
@@ -35,6 +36,7 @@ it("should delete an exercice", async () => {
 
     const createExercice = await prisma.exercice.create({
         data: {
+            language: getRandomSupportedLanguage(),
             statement: faker.lorem.sentence(),
             difficulty: faker.datatype.number({ min: 1, max: 5 }),
         }

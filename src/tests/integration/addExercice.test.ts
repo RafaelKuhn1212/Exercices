@@ -10,8 +10,12 @@ import { faker } from "@faker-js/faker";
 import getInfo from "../functions/getUserAndJWT";
 import genRandomIoData from "../functions/genRandomIoData";
 import setPermToUser from "../functions/setPermToUser";
-import mockCodeToReturnValue from "../functions/mockCodeToReturnValue";
+import mockCodeToReturnValuePORTUGOL from "../functions/mockCodeToReturnValuePortugol";
+import mockCodeToReturnValueC from "../functions/mockCodeToReturnValueC";
+
 import genRandomTypedPortugolData from "../functions/genRandomTypedPortugolData";
+import getRandomSupportedLanguage from "../functions/getRandomSupportedLanguage";
+import genRandomTypedC from "../functions/genRandomTypedC";
 
 const request = supertest(app())
 
@@ -38,6 +42,7 @@ await setPermToUser(info.user)
 const ioData = genRandomIoData()
 
 const response = await request.post("/exercice/add").send({
+    language: getRandomSupportedLanguage(),
     statement: faker.lorem.sentence(),
     difficulty: faker.datatype.number({ min: 1, max: 5 }),
     genRandomData: false,
@@ -45,7 +50,7 @@ const response = await request.post("/exercice/add").send({
 }).set({
     token: info.jwt
 })
-
+console.log(response)
 expect(response.statusCode).toBe(201)
 const exercice = await prisma.exercice.findUnique({
     where:{
@@ -79,18 +84,37 @@ it("should add an exercice using random data", async () => {
 const info = await getInfo(request)
 await setPermToUser(info.user)
 
-const expectedValue = genRandomTypedPortugolData()
+let expectedValue:string | number | undefined = undefined
+let response
 
-const response = await request.post("/exercice/add").send({
+if(getRandomSupportedLanguage() === "c"){
+    expectedValue = genRandomTypedC()
+
+    response = await request.post("/exercice/add").send({
+        language: "c",
+        statement: faker.lorem.sentence(),
+        difficulty: faker.datatype.number({ min: 1, max: 5 }),
+        genRandomData: true,
+        code: mockCodeToReturnValueC(expectedValue?.toString() || ""),
+        entries: [],
+    }).set({
+        token: info.jwt
+    })
+
+}else if(getRandomSupportedLanguage() === "portugol"){
+expectedValue = genRandomTypedPortugolData()
+
+response = await request.post("/exercice/add").send({
+    language: "portugol",
     statement: faker.lorem.sentence(),
     difficulty: faker.datatype.number({ min: 1, max: 5 }),
     genRandomData: true,
-    code: mockCodeToReturnValue(expectedValue?.toString() || ""),
+    code: mockCodeToReturnValuePORTUGOL(expectedValue?.toString() || ""),
     entries: [],
 }).set({
     token: info.jwt
 })
-
+}
 expect(response.statusCode).toBe(201)
 const exercice = await prisma.exercice.findUnique({
     where:{

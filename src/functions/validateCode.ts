@@ -1,10 +1,20 @@
 import AppErrorConstructor from "../Errors/errorConstructor";
 import getInfoFromExercice from "../models/getInfoFromExercice";
-import compiler from "../services/compiler"
+import compilerPORTUGOL from "../services/compiler";
+import compilerC from "../services/c-compiler";
 export default async function validateCode(exerciceId: string, code: string): Promise<{ passed: boolean, error?: { errorOn: number, expected: string, got: string } }> {
     try {
 
         const exercice = await getInfoFromExercice(exerciceId)
+
+        let compilerService: compilerC | compilerPORTUGOL
+        if(exercice.language == "c"){
+            compilerService = new compilerC()
+        }
+        else if(exercice.language == "portugol"){ 
+            compilerService = new compilerPORTUGOL()
+        }
+
         const tests = exercice?.tests
 
         return Promise.all(
@@ -12,8 +22,6 @@ export default async function validateCode(exerciceId: string, code: string): Pr
 
             return new Promise(async (resolve, reject) => {
                 try {
-
-                    const compilerService = new compiler()
 
                     const result = await compilerService.runCode(code, tests[i].input)
 
